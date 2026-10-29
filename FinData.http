@@ -1,0 +1,6 @@
+@FinData_HostAddress = http://localhost:5068
+
+GET {{FinData_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

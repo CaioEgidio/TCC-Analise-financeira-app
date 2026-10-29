@@ -1,0 +1,44 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+!.env.template
+
+# .NET build outputs
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# VS Code workspace settings
+.vscode/
+
+# Logs
+*.log
+
+# Test results
+[Tt]est[Rr]esults*/
+*.trx
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local database and backup files
+*.bak
+*.dump
+*.sql.gz
+
+# Local user-specific configuration
+appsettings.Local.json
+appsettings.*.Local.json

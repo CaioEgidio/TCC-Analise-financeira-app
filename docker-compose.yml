@@ -1,0 +1,19 @@
+services:
+  findata-db:
+    image: postgres:17
+    container_name: findata-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: findata
+      POSTGRES_USER: findata_user
+      POSTGRES_PASSWORD: ${FINDATA_DB_PASSWORD}
+    volumes:
+      - findata_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U findata_user -d findata"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  findata_postgres_data:
