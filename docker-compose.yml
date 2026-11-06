@@ -3,6 +3,8 @@ services:
     image: postgres:17
     container_name: findata-postgres
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:5433:5432"
     environment:
       POSTGRES_DB: findata
       POSTGRES_USER: findata_user
