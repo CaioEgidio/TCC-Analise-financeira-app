@@ -2,10 +2,12 @@ using FinData.Application.Commands.DeleteTransaction;
 using FinData.Application.Commands.CreateTransaction;
 using FinData.Application.Commands.UpdateTransaction;
 using FinData.Application.Queries.GetTransactions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinData.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/transactions")]
 public class TransactionsController : ControllerBase

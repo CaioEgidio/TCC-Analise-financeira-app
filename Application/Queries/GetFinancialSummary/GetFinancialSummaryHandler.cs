@@ -1,3 +1,4 @@
+using FinData.Application.Interfaces;
 using FinData.Domain.Entities;
 using FinData.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,14 @@ namespace FinData.Application.Queries.GetFinancialSummary;
 public class GetFinancialSummaryHandler
 {
     private readonly FinDataDbContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public GetFinancialSummaryHandler(FinDataDbContext context)
+    public GetFinancialSummaryHandler(
+        FinDataDbContext context,
+        ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<FinancialSummaryDto> HandleAsync(
@@ -26,16 +31,16 @@ public class GetFinancialSummaryHandler
             throw new ArgumentException(
                 "O mês deve estar entre 1 e 12.");
 
-        var firstDay = new DateOnly(year, month, 1);
+        var userId = _currentUser.Id;
 
+        var firstDay = new DateOnly(year, month, 1);
         var lastDay = new DateOnly(
-            year,
-            month,
-            DateTime.DaysInMonth(year, month));
+            year, month, DateTime.DaysInMonth(year, month));
 
         var totals = await _context.Transactions
             .AsNoTracking()
             .Where(transaction =>
+                transaction.UserId == userId &&
                 transaction.Date >= firstDay &&
                 transaction.Date <= lastDay)
             .GroupBy(transaction => transaction.Type)

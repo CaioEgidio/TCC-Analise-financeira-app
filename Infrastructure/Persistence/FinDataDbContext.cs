@@ -1,11 +1,16 @@
 using FinData.Domain.Entities;
+using FinData.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinData.Infrastructure.Persistence;
 
-public class FinDataDbContext : DbContext
+public class FinDataDbContext
+    : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
-    public FinDataDbContext(DbContextOptions<FinDataDbContext> options)
+    public FinDataDbContext(
+        DbContextOptions<FinDataDbContext> options)
         : base(options)
     {
     }
@@ -30,6 +35,11 @@ public class FinDataDbContext : DbContext
 
             entity.Property(category => category.CreatedAt)
                 .HasColumnType("timestamp with time zone");
+
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(category => category.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -52,6 +62,11 @@ public class FinDataDbContext : DbContext
             entity.HasOne(transaction => transaction.Category)
                 .WithMany()
                 .HasForeignKey(transaction => transaction.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(transaction => transaction.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

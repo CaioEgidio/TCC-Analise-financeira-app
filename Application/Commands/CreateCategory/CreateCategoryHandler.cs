@@ -1,3 +1,4 @@
+using FinData.Application.Interfaces;
 using FinData.Domain.Entities;
 using FinData.Domain.Interfaces;
 
@@ -6,10 +7,14 @@ namespace FinData.Application.Commands.CreateCategory;
 public class CreateCategoryHandler
 {
     private readonly ICategoryRepository _repository;
+    private readonly ICurrentUser _currentUser;
 
-    public CreateCategoryHandler(ICategoryRepository repository)
+    public CreateCategoryHandler(
+        ICategoryRepository repository,
+        ICurrentUser currentUser)
     {
         _repository = repository;
+        _currentUser = currentUser;
     }
 
     public async Task<Guid> HandleAsync(
@@ -17,6 +22,7 @@ public class CreateCategoryHandler
         CancellationToken cancellationToken = default)
     {
         var category = new Category(
+            _currentUser.Id,
             command.Name,
             command.Description);
 
@@ -26,4 +32,3 @@ public class CreateCategoryHandler
         return category.Id;
     }
 }
-

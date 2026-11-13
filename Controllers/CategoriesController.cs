@@ -1,9 +1,11 @@
 using FinData.Application.Commands.CreateCategory;
 using Microsoft.AspNetCore.Mvc;
 using FinData.Application.Queries.GetCategories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinData.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/categories")]
 public class CategoriesController : ControllerBase

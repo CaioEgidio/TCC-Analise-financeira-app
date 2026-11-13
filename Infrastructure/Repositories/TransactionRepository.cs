@@ -1,3 +1,4 @@
+using FinData.Application.Interfaces;
 using FinData.Domain.Entities;
 using FinData.Domain.Interfaces;
 using FinData.Infrastructure.Persistence;
@@ -8,20 +9,26 @@ namespace FinData.Infrastructure.Repositories;
 public class TransactionRepository : ITransactionRepository
 {
     private readonly FinDataDbContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public TransactionRepository(FinDataDbContext context)
+    public TransactionRepository(
+        FinDataDbContext context,
+        ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<Transaction?> GetByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        return await _context.Transactions
-            .FirstOrDefaultAsync(
-                transaction => transaction.Id == id,
-                cancellationToken);
+        var userId = _currentUser.Id;
+
+        return await _context.Transactions.FirstOrDefaultAsync(
+            transaction => transaction.Id == id &&
+                           transaction.UserId == userId,
+            cancellationToken);
     }
 
     public async Task AddAsync(

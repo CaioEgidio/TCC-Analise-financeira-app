@@ -10,6 +10,7 @@ public class Transaction
     public Guid CategoryId { get; private set; }
     public Category? Category { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public Guid? UserId { get; private set; }
 
     // Usado pelo EF Core ao carregar os dados.
     private Transaction()
@@ -17,17 +18,23 @@ public class Transaction
     }
 
     public Transaction(
-        string description,
-        decimal amount,
-        DateOnly date,
-        TransactionType type,
-        Guid categoryId)
-    {
-        Update(description, amount, date, type, categoryId);
+    Guid userId,
+    string description,
+    decimal amount,
+    DateOnly date,
+    TransactionType type,
+    Guid categoryId)
+{
+    if (userId == Guid.Empty)
+        throw new ArgumentException(
+            "O usuário é obrigatório.", nameof(userId));
 
-        Id = Guid.NewGuid();
-        CreatedAt = DateTime.UtcNow;
-    }
+    Update(description, amount, date, type, categoryId);
+
+    Id = Guid.NewGuid();
+    UserId = userId;
+    CreatedAt = DateTime.UtcNow;
+}
 
     public void Update(
         string description,

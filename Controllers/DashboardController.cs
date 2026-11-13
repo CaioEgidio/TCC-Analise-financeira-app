@@ -1,9 +1,10 @@
 using FinData.Application.Queries.GetExpensesByCategory;
 using FinData.Application.Queries.GetFinancialSummary;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinData.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/dashboard")]
 public class DashboardController : ControllerBase

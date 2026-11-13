@@ -1,3 +1,4 @@
+using FinData.Application.Interfaces;
 using FinData.Domain.Entities;
 using FinData.Domain.Interfaces;
 
@@ -7,13 +8,16 @@ public class CreateTransactionHandler
 {
     private readonly ITransactionRepository _transactions;
     private readonly ICategoryRepository _categories;
+    private readonly ICurrentUser _currentUser;
 
     public CreateTransactionHandler(
         ITransactionRepository transactions,
-        ICategoryRepository categories)
+        ICategoryRepository categories,
+        ICurrentUser currentUser)
     {
         _transactions = transactions;
         _categories = categories;
+        _currentUser = currentUser;
     }
 
     public async Task<Guid> HandleAsync(
@@ -21,6 +25,7 @@ public class CreateTransactionHandler
         CancellationToken cancellationToken = default)
     {
         var transaction = new Transaction(
+            _currentUser.Id,
             command.Description,
             command.Amount,
             command.Date,
@@ -33,7 +38,7 @@ public class CreateTransactionHandler
 
         if (!categoryExists)
             throw new ArgumentException(
-                "A categoria informada não existe.",
+                "A categoria não foi encontrada para este usuário.",
                 nameof(command.CategoryId));
 
         await _transactions.AddAsync(transaction, cancellationToken);
