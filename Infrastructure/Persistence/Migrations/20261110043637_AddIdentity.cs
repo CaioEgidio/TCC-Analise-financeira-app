@@ -1,3 +1,4 @@
+// Acrescenta as tabelas de autenticação do ASP.NET Core Identity.
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -10,6 +11,7 @@ namespace FinData.Infrastructure.Persistence.Migrations
     public partial class AddIdentity : Migration
     {
         /// <inheritdoc />
+        // Cria usuários e as tabelas auxiliares utilizadas pelo Identity.
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -196,6 +198,7 @@ namespace FinData.Infrastructure.Persistence.Migrations
         }
 
         /// <inheritdoc />
+        // Remove as tabelas do Identity criadas por esta migration.
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

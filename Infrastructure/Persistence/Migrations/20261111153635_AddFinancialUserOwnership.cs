@@ -1,3 +1,4 @@
+// Associa categorias e lançamentos aos usuários.
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -9,6 +10,7 @@ namespace FinData.Infrastructure.Persistence.Migrations
     public partial class AddFinancialUserOwnership : Migration
     {
         /// <inheritdoc />
+        // Adiciona UserId anulável, índices e chaves estrangeiras para preservar os dados antigos.
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
@@ -51,6 +53,7 @@ namespace FinData.Infrastructure.Persistence.Migrations
         }
 
         /// <inheritdoc />
+        // Remove os vínculos de propriedade acrescentados por esta migration.
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

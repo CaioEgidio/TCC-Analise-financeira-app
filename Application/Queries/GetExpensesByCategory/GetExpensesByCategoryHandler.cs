@@ -1,3 +1,4 @@
+// Agrupa as despesas do usuário por categoria no período selecionado.
 using FinData.Application.Interfaces;
 using FinData.Domain.Entities;
 using FinData.Infrastructure.Persistence;
@@ -10,6 +11,7 @@ public class GetExpensesByCategoryHandler
     private readonly FinDataDbContext _context;
     private readonly ICurrentUser _currentUser;
 
+    // Recebe os serviços necessários pela injeção de dependência.
     public GetExpensesByCategoryHandler(
         FinDataDbContext context,
         ICurrentUser currentUser)
@@ -18,11 +20,13 @@ public class GetExpensesByCategoryHandler
         _currentUser = currentUser;
     }
 
+    // Agrupa as despesas do usuário por categoria no período selecionado.
     public async Task<List<ExpensesByCategoryDto>> HandleAsync(
         int year,
         int month,
         CancellationToken cancellationToken = default)
     {
+        // Valida os parâmetros antes de calcular o intervalo e consultar o banco.
         if (year < 1 || year > 9999)
             throw new ArgumentException(
                 "O ano deve estar entre 1 e 9999.");
@@ -33,17 +37,20 @@ public class GetExpensesByCategoryHandler
 
         var userId = _currentUser.Id;
 
+        // Inclui desde o primeiro até o último dia do mês, pela data da movimentação.
         var firstDay = new DateOnly(year, month, 1);
         var lastDay = new DateOnly(
             year, month, DateTime.DaysInMonth(year, month));
 
         var totals = await _context.Transactions
+            // A consulta é somente leitura; o EF não precisa acompanhar mudanças nas entidades.
             .AsNoTracking()
             .Where(transaction =>
                 transaction.UserId == userId &&
                 transaction.Type == TransactionType.Expense &&
                 transaction.Date >= firstDay &&
                 transaction.Date <= lastDay)
+            // Soma apenas despesas e mantém separados o identificador e o nome de cada categoria.
             .GroupBy(transaction => new
             {
                 transaction.CategoryId,
@@ -59,6 +66,7 @@ public class GetExpensesByCategoryHandler
             .ThenBy(category => category.CategoryName)
             .ToListAsync(cancellationToken);
 
+        // Converte os resultados agregados para o formato de resposta da API.
         return totals
             .Select(category => new ExpensesByCategoryDto(
                 category.CategoryId,

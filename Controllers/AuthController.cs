@@ -1,3 +1,4 @@
+// Disponibiliza cadastro, login e identificação do usuário autenticado.
 using System.Security.Claims;
 using FinData.Application.Commands.LoginUser;
 using FinData.Application.Commands.RegisterUser;
@@ -11,6 +12,7 @@ namespace FinData.Controllers;
 [Route("api/auth")]
 public sealed class AuthController : ControllerBase
 {
+    // Cria a conta e retorna 201 com o identificador; falhas de cadastro retornam 400.
     [HttpPost("register")]
     public async Task<IActionResult> Register(
         [FromBody] RegisterUserCommand command,
@@ -31,6 +33,7 @@ public sealed class AuthController : ControllerBase
             new { id = userId });
     }
 
+    // Autentica e retorna os tokens do Identity; credenciais recusadas retornam 401.
     [HttpPost("login")]
     [ProducesResponseType(
         typeof(AccessTokenResponse),
@@ -54,6 +57,7 @@ public sealed class AuthController : ControllerBase
         return new EmptyResult();
     }
 
+    // Exige autenticação e retorna o identificador presente nas claims do usuário.
     [Authorize]
     [HttpGet("me")]
     public IActionResult Me()

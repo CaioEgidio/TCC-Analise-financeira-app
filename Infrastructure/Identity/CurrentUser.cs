@@ -1,3 +1,4 @@
+// Obtém o identificador do usuário a partir da identidade autenticada na requisição.
 using System.Security.Claims;
 using FinData.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -8,11 +9,13 @@ public sealed class CurrentUser : ICurrentUser
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    // Recebe o serviço que dá acesso ao contexto HTTP da requisição.
     public CurrentUser(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
+    // Lê a claim de identificação e recusa identidades ausentes ou inválidas.
     public Guid Id
     {
         get

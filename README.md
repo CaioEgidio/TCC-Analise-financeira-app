@@ -170,4 +170,8 @@ Roteiro manual complementar: cadastrar conta nova; entrar; criar categoria; regi
 - Sem recuperação de senha ou confirmação de e-mail.
 - Registros antigos com `UserId` nulo permanecem no banco e ficam invisíveis nas consultas autenticadas. Atribuí-los exige decisão e migração de dados específica.
 - O frontend rejeita valores acima da precisão segura de centavos do JavaScript; o backend usa `decimal` e PostgreSQL `numeric(18,2)`.
-- O build gera `frontend/dist`; a API não serve esses arquivos. O proxy Vite é só de desenvolvimento. Publicação requer HTTPS e encaminhamento de `/api` na hospedagem.
+- O build gera `frontend/dist`. Para publicação, o Dockerfile copia esses arquivos para `wwwroot`, servidos pela própria API. Em desenvolvimento, o Vite continua na porta 5173.
+
+## Publicação para demonstração
+
+A preparação para Render Free + Neon Free está descrita em [DEPLOY.md](DEPLOY.md). Ela usa um único endereço para frontend e API, banco externo e migrations opt-in pelo ambiente. Os arquivos de publicação não significam que o serviço já esteja online: o link e o fluxo completo devem ser verificados após o deploy.

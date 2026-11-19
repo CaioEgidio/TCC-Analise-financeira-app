@@ -103,7 +103,7 @@ function App() {
       </section>
 
       <section className="access-panel" aria-labelledby="access-title">
-        <div className="access-content">
+        <div className="access-content" key={registering ? 'register' : 'login'}>
           {registering ? <RegisterForm initialEmail={email} onBack={() => setRegistering(false)}
             onRegistered={(registeredEmail) => {
               setEmail(registeredEmail)

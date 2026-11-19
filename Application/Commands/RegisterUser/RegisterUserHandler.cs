@@ -1,3 +1,4 @@
+// Cria uma conta pelo Identity, que valida a senha e armazena seu hash.
 using FinData.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,13 @@ public sealed class RegisterUserHandler
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
+    // Recebe os serviços necessários pela injeção de dependência.
     public RegisterUserHandler(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
+    // Cria uma conta pelo Identity, que valida a senha e armazena seu hash.
     public async Task<(IdentityResult Result, Guid UserId)> HandleAsync(
         RegisterUserCommand command)
     {
@@ -28,6 +31,7 @@ public sealed class RegisterUserHandler
 
         try
         {
+            // O Identity aplica as regras de cadastro e gera o hash da senha.
             var result = await _userManager.CreateAsync(user, command.Password);
             return (result, user.Id);
         }

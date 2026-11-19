@@ -1,0 +1,16 @@
+.git
+.vs
+.vscode
+.idea
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.env*
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/*.user
+**/*.log
+**/TestResults
+**/*.dump
+**/*.bak

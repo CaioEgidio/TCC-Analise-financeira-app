@@ -1,3 +1,4 @@
+// Transporta os dados recebidos para criar uma receita ou despesa.
 using FinData.Domain.Entities;
 
 namespace FinData.Application.Commands.CreateTransaction;

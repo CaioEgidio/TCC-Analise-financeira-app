@@ -1,3 +1,4 @@
+// Recebe e-mail e senha utilizados na tentativa de login.
 using System.ComponentModel.DataAnnotations;
 
 namespace FinData.Application.Commands.LoginUser;

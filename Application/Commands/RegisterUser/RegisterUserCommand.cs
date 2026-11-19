@@ -1,3 +1,4 @@
+// Recebe e-mail e senha do cadastro e declara as validações básicas da entrada.
 using System.ComponentModel.DataAnnotations;
 
 namespace FinData.Application.Commands.RegisterUser;

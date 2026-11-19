@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: findata
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Hosting__HttpsTerminatedAtProxy
+        value: "true"
+      - key: Database__ApplyMigrations
+        value: "true"
+      - key: ConnectionStrings__FinData
+        sync: false

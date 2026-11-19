@@ -4,6 +4,8 @@ import { loadDashboard, SessionExpiredError } from './financial-api'
 import type { DashboardData, Transaction } from './financial-api'
 import CreateDialog from './CreateDialog'
 import DeleteDialog from './DeleteDialog'
+import UiIcon from './UiIcon'
+import { categoryColors, expenseChartBackground } from './category-chart'
 import './Dashboard.css'
 
 type Props = {
@@ -41,12 +43,15 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
   const [notice, setNotice] = useState('')
   const [editing, setEditing] = useState<Transaction | undefined>()
   const [deleting, setDeleting] = useState<Transaction | null>(null)
+  const [activeSection, setActiveSection] = useState('overview')
   const requestKey = `${period}-${refresh}`
   const loading = result?.requestKey !== requestKey
   const data = loading ? undefined : result?.data
   const error = loading ? undefined : result?.error
   const [year, month] = period.split('-').map(Number)
   const periodLabel = `${monthNames[month - 1]} de ${year}`
+  const totalExpenses = data?.summary.totalExpense ?? 0
+  const chartBackground = expenseChartBackground(data?.categories ?? [], totalExpenses)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -84,24 +89,37 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
   }
 
   return (
-    <main className="dashboard" lang="pt-BR">
+    <div className="dashboard" lang="pt-BR">
+      <a className="skip-link" href="#dashboard-main">Ir para o conteúdo</a>
+      <aside className="dashboard-sidebar" aria-label="Navegação FinData">
+        <a className="brand" href="#dashboard-main" aria-label="FinData, início"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>FinData<span className="brand-dot">.</span></a>
+        <p className="sidebar-caption">Seu espaço financeiro</p>
+        <nav className="dashboard-nav" aria-label="Seções do dashboard">
+          <a href="#dashboard-main" aria-current={activeSection === 'overview' ? 'location' : undefined} onClick={() => setActiveSection('overview')}><UiIcon name="overview" />Visão geral</a>
+          <a href="#transactions-title" aria-current={activeSection === 'transactions' ? 'location' : undefined} onClick={() => setActiveSection('transactions')}><UiIcon name="transactions" />Lançamentos</a>
+          <a href="#categories-title" aria-current={activeSection === 'categories' ? 'location' : undefined} onClick={() => setActiveSection('categories')}><UiIcon name="category" />Por categoria</a>
+        </nav>
+        <div className="sidebar-bottom">
+          <div className="sidebar-note"><UiIcon name="wallet" size={24} /><strong>Organização que faz diferença.</strong><p>Um lançamento de cada vez, mais clareza para decidir.</p></div>
+          <button type="button" className="sidebar-category" onClick={() => { setNotice(''); setDialogMode('category') }}><UiIcon name="plus" size={18} />Criar categoria</button>
+        </div>
+      </aside>
       <header className="dashboard-header">
         <div className="dashboard-header-inner">
-          <a className="brand" href="/" aria-label="FinData, início">
-            <span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>FinData
-          </a>
+          <span className="header-location">Meu financeiro <span aria-hidden="true">/</span> <strong>Visão geral</strong></span>
           <div className="dashboard-account">
+            <span className="account-avatar" aria-hidden="true">{email.slice(0, 1).toUpperCase()}</span>
             <span title={email}>{email}</span>
-            <button className="logout-button" type="button" onClick={onLogout}>Sair da conta</button>
+            <button className="logout-button" type="button" onClick={onLogout}><UiIcon name="logout" size={17} /><span>Sair da conta</span></button>
           </div>
         </div>
       </header>
 
-      <div className="dashboard-content">
+      <main id="dashboard-main" className="dashboard-content" tabIndex={-1}>
         <section className="dashboard-heading" aria-labelledby="dashboard-title">
           <div>
-            <h1 id="dashboard-title">Seu mês, em perspectiva.</h1>
-            <p>Acompanhe suas entradas, saídas e o saldo do período.</p>
+            <h1 id="dashboard-title">Visão geral</h1>
+            <p>Seu dinheiro, com tudo no lugar.</p>
           </div>
           <form key={period} className="period-form" onSubmit={changePeriod}>
             <label htmlFor="period">Período</label>
@@ -114,8 +132,8 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
         </section>
 
         <div className="dashboard-actions" aria-label="Cadastrar dados financeiros">
-          <button className="primary-button" type="button" onClick={() => { setNotice(''); setDialogMode('transaction') }}>Novo lançamento</button>
-          <button className="secondary-button" type="button" onClick={() => { setNotice(''); setDialogMode('category') }}>Nova categoria</button>
+          <button className="primary-button" type="button" onClick={() => { setNotice(''); setDialogMode('transaction') }}><UiIcon name="plus" size={18} />Novo lançamento</button>
+          <button className="secondary-button" type="button" onClick={() => { setNotice(''); setDialogMode('category') }}><UiIcon name="category" size={17} />Nova categoria</button>
         </div>
         {notice && <p className="save-notice" role="status">{notice}</p>}
 
@@ -130,19 +148,19 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
 
         {data && (
           <>
-            <section className="summary-grid" aria-label="Resumo financeiro mensal">
+            <section key={requestKey} className="summary-grid" aria-label="Resumo financeiro mensal">
               <article className="summary-item">
-                <div className="summary-label"><span>Receitas</span><span className="income-symbol" aria-hidden="true">+</span></div>
+                <div className="summary-label"><span>Receitas</span><span className="income-symbol"><UiIcon name="up" /></span></div>
                 <strong className="summary-value income-value">{currency.format(data.summary.totalIncome)}</strong>
                 <p>Total recebido no período</p>
               </article>
               <article className="summary-item">
-                <div className="summary-label"><span>Despesas</span><span className="expense-symbol" aria-hidden="true">−</span></div>
+                <div className="summary-label"><span>Despesas</span><span className="expense-symbol"><UiIcon name="down" /></span></div>
                 <strong className="summary-value expense-value">{currency.format(data.summary.totalExpense)}</strong>
                 <p>Total gasto no período</p>
               </article>
               <article className="summary-item balance-item">
-                <div className="summary-label"><span>Saldo do mês</span><span aria-hidden="true">=</span></div>
+                <div className="summary-label"><span>Saldo do mês</span><span className="balance-symbol"><UiIcon name="wallet" /></span></div>
                 <strong className="summary-value">{currency.format(data.summary.balance)}</strong>
                 <p>Receitas menos despesas do período</p>
               </article>
@@ -150,16 +168,18 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
 
             <section className="dashboard-section" aria-labelledby="categories-title">
               <div className="section-heading">
-                <div><h2 id="categories-title">Para onde foi seu dinheiro?</h2><p>Despesas agrupadas por categoria</p></div>
+                <div><h2 id="categories-title" tabIndex={-1}>Despesas por categoria</h2><p>Entenda o que compõe seus gastos</p></div>
                 <span className="section-total">{currency.format(data.summary.totalExpense)} em despesas</span>
               </div>
               {data.categories.length === 0 ? (
                 <div className="dashboard-empty"><h3>Nenhuma despesa neste mês.</h3><p>As despesas do período aparecerão aqui, organizadas por categoria.</p></div>
               ) : (
+                <div className="category-layout">
+                  <div className="expense-chart" aria-hidden="true"><div className="expense-ring" style={{ background: chartBackground }}><div><span>Total de despesas</span><strong>{currency.format(totalExpenses)}</strong></div></div></div>
                 <ul className="category-breakdown">
-                  {data.categories.map((category) => (
+                  {data.categories.map((category, index) => (
                     <li key={category.categoryId}>
-                      <div className="category-caption"><span>{category.categoryName}</span><strong>{currency.format(category.total)}</strong></div>
+                      <div className="category-caption"><span><i className="category-dot" style={{ background: categoryColors[index % categoryColors.length] }} />{category.categoryName}</span><strong>{currency.format(category.total)}</strong></div>
                       <meter min={0} max={Math.max(data.summary.totalExpense, category.total, 1)} value={category.total}
                         aria-label={`Despesas em ${category.categoryName}`}>
                         {currency.format(category.total)}
@@ -167,12 +187,13 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
                     </li>
                   ))}
                 </ul>
+                </div>
               )}
             </section>
 
             <section className="dashboard-section" aria-labelledby="transactions-title">
               <div className="section-heading">
-                <div><h2 id="transactions-title">Movimentações do mês</h2><p>Receitas e despesas do período selecionado</p></div>
+                <div><h2 id="transactions-title" tabIndex={-1}>Lançamentos</h2><p>Todos os movimentos do período</p></div>
                 <span className="section-total">{data.transactions.length} {data.transactions.length === 1 ? 'lançamento' : 'lançamentos'}</span>
               </div>
               {data.transactions.length === 0 ? (
@@ -191,8 +212,8 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
                           <td><span className={transaction.type === 1 ? 'type-income' : 'type-expense'}>{transaction.type === 1 ? 'Receita' : 'Despesa'}</span></td>
                           <td className="amount-column">{currency.format(transaction.amount)}</td>
                           <td><div className="row-actions">
-                            <button type="button" className="secondary-button" aria-label={`Editar ${transaction.description}`} onClick={() => { setNotice(''); setEditing(transaction); setDialogMode('transaction') }}>Editar</button>
-                            <button type="button" className="secondary-button delete-action" aria-label={`Excluir ${transaction.description}`} onClick={() => { setNotice(''); setDeleting(transaction) }}>Excluir</button>
+                            <button type="button" className="secondary-button" aria-label={`Editar ${transaction.description}`} onClick={() => { setNotice(''); setEditing(transaction); setDialogMode('transaction') }}><UiIcon name="edit" size={16} /><span>Editar</span></button>
+                            <button type="button" className="secondary-button delete-action" aria-label={`Excluir ${transaction.description}`} onClick={() => { setNotice(''); setDeleting(transaction) }}><UiIcon name="trash" size={16} /><span>Excluir</span></button>
                           </div></td>
                         </tr>
                       ))}
@@ -204,7 +225,7 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
           </>
         )}
         <footer className="dashboard-footer">FinData · Controle financeiro pessoal</footer>
-      </div>
+      </main>
       {dialogMode && <CreateDialog key={editing?.id ?? dialogMode} mode={dialogMode} token={token} period={period} transaction={editing}
         onClose={() => { setDialogMode(null); setEditing(undefined) }} onSaved={handleSaved} onSessionExpired={onSessionExpired}
         onCreateCategory={() => { setEditing(undefined); setDialogMode('category') }} />}
@@ -214,6 +235,6 @@ export default function Dashboard({ token, email, onLogout, onSessionExpired }: 
           setNotice('Lançamento excluído. Os dados do período foram atualizados.')
           setRefresh((value) => value + 1)
         }} />}
-    </main>
+    </div>
   )
 }

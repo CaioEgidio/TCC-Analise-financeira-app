@@ -1,3 +1,4 @@
+// Cria as tabelas iniciais de categorias e lançamentos.
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -9,6 +10,7 @@ namespace FinData.Infrastructure.Persistence.Migrations
     public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
+        // Cria a estrutura financeira e o relacionamento entre lançamentos e categorias.
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -55,6 +57,7 @@ namespace FinData.Infrastructure.Persistence.Migrations
         }
 
         /// <inheritdoc />
+        // Remove as tabelas financeiras criadas por esta migration.
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

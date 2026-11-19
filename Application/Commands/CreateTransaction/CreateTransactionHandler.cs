@@ -1,3 +1,4 @@
+// Coordena a validação e a gravação de um novo lançamento.
 using FinData.Application.Interfaces;
 using FinData.Domain.Entities;
 using FinData.Domain.Interfaces;
@@ -10,6 +11,7 @@ public class CreateTransactionHandler
     private readonly ICategoryRepository _categories;
     private readonly ICurrentUser _currentUser;
 
+    // Recebe os serviços necessários pela injeção de dependência.
     public CreateTransactionHandler(
         ITransactionRepository transactions,
         ICategoryRepository categories,
@@ -20,6 +22,7 @@ public class CreateTransactionHandler
         _currentUser = currentUser;
     }
 
+    // Executa a validação e a gravação de um novo lançamento.
     public async Task<Guid> HandleAsync(
         CreateTransactionCommand command,
         CancellationToken cancellationToken = default)
@@ -32,6 +35,7 @@ public class CreateTransactionHandler
             command.Type,
             command.CategoryId);
 
+        // Confirma que a categoria existe e pertence ao usuário atual antes de gravar.
         var categoryExists = await _categories.ExistsAsync(
             command.CategoryId,
             cancellationToken);
