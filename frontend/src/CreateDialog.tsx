@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { createCategory, createTransaction, updateTransaction, getCategories, SessionExpiredError } from './financial-api'
 import type { Category, Transaction, NewTransaction } from './financial-api'
 import './CreateDialog.css'
+import UiIcon from './UiIcon'
 
 type Props = {
   mode: 'category' | 'transaction'
@@ -98,7 +99,7 @@ export default function CreateDialog({ mode, token, period, transaction, onClose
           <h2 id="create-title">{isCategory ? 'Nova categoria' : transaction ? 'Editar lançamento' : 'Novo lançamento'}</h2>
           <p>{isCategory ? 'Organize seus lançamentos com um nome fácil de reconhecer.' : 'Registre uma receita ou despesa na sua conta.'}</p>
         </div>
-        <button className="dialog-close" type="button" onClick={close} disabled={saving} aria-label="Fechar formulário">×</button>
+        <button className="dialog-close" type="button" onClick={close} disabled={saving} aria-label="Fechar formulário"><UiIcon name="close" size={18} /></button>
       </div>
 
       {!isCategory && !categoryState && <p className="dialog-message" role="status">Carregando suas categorias…</p>}
@@ -133,7 +134,10 @@ export default function CreateDialog({ mode, token, period, transaction, onClose
                 </div>
                 <div className="dialog-columns">
                   <div className="form-field"><label htmlFor="transaction-type">Tipo</label>
-                    <select id="transaction-type" name="type" defaultValue={transaction?.type ?? 2}><option value="2">Despesa</option><option value="1">Receita</option></select>
+                    <div className="dialog-select">
+                      <select id="transaction-type" name="type" defaultValue={transaction?.type ?? 2}><option value="2">Despesa</option><option value="1">Receita</option></select>
+                      <UiIcon name="chevron" size={16} />
+                    </div>
                   </div>
                   <div className="form-field"><label htmlFor="transaction-amount">Valor (R$)</label>
                     <input id="transaction-amount" name="amount" type="number" inputMode="decimal" required min="0.01" step="0.01" defaultValue={transaction?.amount} placeholder="0,00" />
@@ -143,10 +147,13 @@ export default function CreateDialog({ mode, token, period, transaction, onClose
                   <input id="transaction-date" name="date" type="date" required min="0001-01-01" max="9999-12-31" defaultValue={transaction?.date ?? defaultDate(period)} />
                 </div>
                 <div className="form-field"><label htmlFor="transaction-category">Categoria</label>
-                  <select id="transaction-category" name="categoryId" defaultValue={transaction?.categoryId ?? ''} required>
-                    <option value="" disabled>Selecione uma categoria</option>
-                    {categories?.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
-                  </select>
+                  <div className="dialog-select">
+                    <select id="transaction-category" name="categoryId" defaultValue={transaction?.categoryId ?? ''} required>
+                      <option value="" disabled>Selecione uma categoria</option>
+                      {categories?.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+                    </select>
+                    <UiIcon name="chevron" size={16} />
+                  </div>
                 </div>
               </>
             )}

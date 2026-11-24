@@ -1,6 +1,8 @@
-type Props = { name: 'overview' | 'category' | 'transactions' | 'plus' | 'logout' | 'up' | 'down' | 'wallet' | 'edit' | 'trash'; size?: number }
+type Props = { name: keyof typeof paths; size?: number }
 
 const paths = {
+  close: 'M6 6l12 12M18 6 6 18',
+  chevron: 'm6 9 6 6 6-6',
   overview: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
   category: 'M3 4h7l11 11-6 6L3 9z M7 8h.01',
   transactions: 'M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4',

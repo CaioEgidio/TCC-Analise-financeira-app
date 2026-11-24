@@ -141,7 +141,9 @@ async function createRecord(path: string, token: string, body: object): Promise<
 }
 
 export function createCategory(token: string, name: string, description: string) {
-  return createRecord('/api/categories', token, { name: name.trim(), description: description.trim() || null })
+  const categoryName = name.trim()
+  if (!categoryName) throw new Error('O nome da categoria é obrigatório.')
+  return createRecord('/api/categories', token, { name: categoryName, description: description.trim() || null })
 }
 
 export function createTransaction(token: string, transaction: NewTransaction) {

@@ -1,5 +1,8 @@
 .create-dialog { width: min(540px, calc(100% - 32px)); max-height: calc(100svh - 40px); overflow-y: auto; border: 1px solid #dce6ed; border-radius: 12px; padding: 30px; color: #173b57; background: #fff; }
 .create-dialog::backdrop { background: rgb(12 35 52 / 60%); }
+html:has(.dashboard) { scrollbar-gutter: stable; }
+html:has(.create-dialog:modal) { overflow: hidden; }
+.create-dialog { overscroll-behavior: contain; }
 .dialog-heading { display: flex; align-items: start; gap: 20px; margin-bottom: 28px; }
 .dialog-heading > div { flex: 1; }
 .dialog-heading h2 { margin: 0 0 10px; font-size: 25px; font-weight: 650; letter-spacing: -.6px; }

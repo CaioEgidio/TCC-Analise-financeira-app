@@ -24,7 +24,7 @@ public class Category
 
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException(
-                "O nome da categoria é obrigatório.", nameof(name));
+                "O nome da categoria é obrigatório.");
 
         // Remove espaços nas extremidades antes de conferir o tamanho permitido.
         name = name.Trim();
